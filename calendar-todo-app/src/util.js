@@ -50,3 +50,16 @@ export const getCalendarColumns = (now) => {
   // ["10.31", "11.1", ..., "11.30", "12.1", "12.2", "12.3"]
   return filledColumns;
 };
+
+/**
+ * @param {number} day - 0~6
+ * @return {string} - 일~월
+ */
+const dayTexts = ["일", "월", "화", "수", "목", "금", "토"];
+export const getDayText = (day) => {
+  return dayTexts[day];
+};
+
+export const getDayColor = (day) => {
+  return day === 0 ? "#e67639" : day === 6 ? "#5872d1" : "#2b2b2b";
+};
