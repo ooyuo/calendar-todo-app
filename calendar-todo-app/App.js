@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -13,6 +13,7 @@ import Margin from "./src/Margin";
 import { runPracticeDayjs } from "./src/practice-dayjs";
 import { getCalendarColumns, getDayColor, getDayText } from "./src/util";
 import { SimpleLineIcons } from "@expo/vector-icons";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const columnsSize = 35;
 
@@ -33,7 +34,7 @@ const Column = ({ text, color, opacity, disabled, onPress, isSelected }) => {
           width: columnsSize,
           heihgt: columnsSize,
           justifyContent: "center",
-          alignItems: center,
+          alignItems:  "center",
           backgroundColor: isSelected ? "#c2c2c2" : "transparent",
           borderRadius: columnsSize / 2
         }}
@@ -59,6 +60,26 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(now);
   const columns = getCalendarColumns(selectedDate);
 
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  }
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  }
+  const handleConfirm = (date) => {
+    setSelectedDate(dayjs(date));
+    hideDatePicker();
+  };
+  const onPressLeftArrow = () =>{
+    const newSelectedDate = dayjs(selectedDate).subtract(1, 'month');
+    setSelectedDate(newSelectedDate);
+  }
+  const onPressRightArrow = () => {
+    const newSelectedDate = dayjs(selectedDate).add(1, 'month');
+    setSelectedDate(newSelectedDate);
+  }
   const ListHeaderComponent = () => {
     const currentDateText = dayjs(selectedDate).format("YYYY.MM.DD.");
     return (
@@ -70,14 +91,14 @@ export default function App() {
             alignItems: "center",
           }}
         >
-          <ArrowButton iconName="arrow-left" onPress={() => {}} />
-          <TouchableOpacity>
+          <ArrowButton iconName="arrow-left" onPress={onPressLeftArrow} />
+          <TouchableOpacity onPress={showDatePicker}>
             <Text style={{ fontSize: 20, color: "#404040" }}>
               {currentDateText}
             </Text>
           </TouchableOpacity>
 
-          <ArrowButton iconName="arrow-right" onPress={() => {}} />
+          <ArrowButton iconName="arrow-right" onPress={onPressRightArrow} />
         </View>
 
         <View style={{ flexDirection: "row" }}>
@@ -133,6 +154,12 @@ export default function App() {
         numColumns={7}
         renderItem={renderItem}
         ListHeaderComponent={ListHeaderComponent}
+      />
+      <DateTimePickerModal 
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
       />
     </SafeAreaView>
   );
